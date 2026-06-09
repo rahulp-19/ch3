@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NikkuChat ❤️ Private Chat App</title>
+  <!-- SEO & Social Meta -->
+  <meta name="description" content="A romantic, real-time private chat application for Rahul & Nikku.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+  
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts for Modern Styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Background Animated Hearts Decoration -->
+  <div class="heart-bg-container" id="heartBgContainer"></div>
+
+  <!-- STATE 1: PASSCODE GATE -->
+  <div class="auth-container" id="passcodeScreen">
+    <div class="glass-card auth-card" id="passcodeCard">
+      <div class="auth-header">
+        <div class="heart-icon-wrapper">
+          <i class="fa-solid fa-heart pulse"></i>
+        </div>
+        <h1>NikkuChat</h1>
+        <p>This is a private space. Enter the secret code to proceed.</p>
+      </div>
+      <form id="passcodeForm" class="auth-form">
+        <div class="passcode-input-wrapper">
+          <input type="password" id="passcodeField" maxlength="8" placeholder="••••" autocomplete="off" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="passcodeSubmitBtn">
+          Unlock Love <i class="fa-solid fa-lock-open"></i>
+        </button>
+        <p class="error-msg" id="passcodeErrorMsg">Incorrect code, please try again! 💔</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- STATE 2: WHO ARE YOU SELECTOR -->
+  <div class="auth-container hidden" id="userSelectorScreen">
+    <div class="glass-card auth-card animate-fade-in">
+      <div class="auth-header">
+        <h2>Who are you?</h2>
+        <p>Select your profile to start chatting.</p>
+      </div>
+      <div class="user-selection-grid">
+        <!-- Rahul Selection Card -->
+        <button class="user-select-card" data-user="Rahul">
+          <div class="user-avatar-huge rahul-bg">
+            <span>R</span>
+          </div>
+          <span class="user-name">Rahul</span>
+        </button>
+        <!-- Nikku Selection Card -->
+        <button class="user-select-card" data-user="Nikku">
+          <div class="user-avatar-huge nikku-bg">
+            <span>N</span>
+          </div>
+          <span class="user-name">Nikku</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATE 3: CHAT DASHBOARD -->
+  <div class="app-viewport hidden" id="chatDashboard">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <!-- Partner Avatar -->
+        <div class="partner-avatar-wrapper">
+          <div class="user-avatar-small" id="partnerAvatar">
+            <span id="partnerInitials">-</span>
+          </div>
+          <span class="status-dot-indicator" id="partnerPresenceDot"></span>
+        </div>
+        <!-- Partner Details -->
+        <div class="partner-info">
+          <h2 id="partnerName">Partner</h2>
+          <div class="presence-meta">
+            <span id="partnerStatusText">Offline</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Relationship Counter -->
+      <div class="relationship-counter" id="relationshipCounter" title="Click to view details">
+        <span class="counter-text">Together for <strong id="relationshipDays">0</strong> days ❤️</span>
+      </div>
+
+      <div class="header-right">
+        <!-- Photo Gallery Drawer Toggle -->
+        <button class="header-btn" id="galleryToggleBtn" title="Shared Photo Gallery">
+          <i class="fa-solid fa-images"></i>
+        </button>
+        <!-- Log Out / Reset Profile -->
+        <button class="header-btn" id="logoutBtn" title="Lock/Switch Profile">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Container (Messages & Side Gallery) -->
+    <main class="chat-main-container">
+      <!-- Chat Messages Window -->
+      <section class="chat-messages-wrapper" id="chatArea">
+        <div class="messages-container" id="messagesList">
+          <!-- Dynamically inserted messages will appear here -->
+          <div class="chat-loading">
+            <i class="fa-solid fa-heart pulse"></i>
+            <p>Connecting to your love stream...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Shared Photo Gallery Drawer (Slide-Out panel) -->
+      <aside class="gallery-drawer" id="galleryDrawer">
+        <div class="gallery-header">
+          <h3>Shared Gallery <i class="fa-solid fa-heart"></i></h3>
+          <button class="close-gallery-btn" id="galleryCloseBtn">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="gallery-upload-zone">
+          <label for="galleryUploadInput" class="gallery-upload-label">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Upload New Photo
+          </label>
+          <input type="file" id="galleryUploadInput" accept="image/*" style="display: none;">
+          <div class="upload-progress-container hidden" id="galleryUploadProgress">
+            <div class="progress-bar">
+              <div class="progress-fill" id="galleryProgressBarFill"></div>
+            </div>
+            <span class="progress-text" id="galleryProgressText">Uploading 0%</span>
+          </div>
+        </div>
+        <div class="gallery-grid" id="galleryGrid">
+          <!-- Dynamically inserted photos -->
+          <p class="empty-gallery-msg">No shared photos yet. Send some in chat or upload here! 📸</p>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Bottom Input & Controls Panel -->
+    <footer class="app-footer">
+      <!-- Typing Indicator Widget -->
+      <div class="typing-indicator-container hidden" id="typingIndicatorWrapper">
+        <span class="typing-text" id="typingIndicatorText">Partner is typing...</span>
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Quick Emoji Reactions Selector for Message Inputs -->
+      <div class="emoji-picker-container hidden" id="emojiPicker">
+        <div class="emoji-picker-header">
+          <span>Quick Emojis</span>
+          <button class="close-picker-btn" id="emojiPickerClose"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="emoji-list">
+          <button class="emoji-btn-item" data-emoji="❤️">❤️</button>
+          <button class="emoji-btn-item" data-emoji="😂">😂</button>
+          <button class="emoji-btn-item" data-emoji="😍">😍</button>
+          <button class="emoji-btn-item" data-emoji="👍">👍</button>
+          <button class="emoji-btn-item" data-emoji="😭">😭</button>
+          <button class="emoji-btn-item" data-emoji="😘">😘</button>
+          <button class="emoji-btn-item" data-emoji="🥰">🥰</button>
+          <button class="emoji-btn-item" data-emoji="🔥">🔥</button>
+        </div>
+      </div>
+
+      <!-- Message Input Row -->
+      <div class="input-row-container">
+        <!-- Photo/Image Attachment Trigger -->
+        <label for="chatImageInput" class="input-action-btn" title="Send Photo">
+          <i class="fa-solid fa-camera"></i>
+        </label>
+        <input type="file" id="chatImageInput" accept="image/*" style="display: none;">
+
+        <!-- Emoji Panel Trigger -->
+        <button class="input-action-btn" id="emojiPanelBtn" title="Pick Emoji">
+          <i class="fa-regular fa-face-smile"></i>
+        </button>
+
+        <!-- Message Field -->
+        <div class="text-input-wrapper">
+          <textarea id="messageInput" placeholder="Type a message..." rows="1" maxlength="1000"></textarea>
+        </div>
+
+        <!-- Voice Note Control Block (Overlays standard input when recording) -->
+        <div class="voice-recording-overlay hidden" id="voiceRecordingOverlay">
+          <div class="recording-status">
+            <span class="recording-dot"></span>
+            <span class="recording-timer" id="recordingTimer">00:00</span>
+          </div>
+          <div class="recording-wave-visualizer">
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+          </div>
+          <div class="recording-actions">
+            <button class="recording-action-btn cancel" id="voiceCancelBtn" title="Cancel Recording">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+            <button class="recording-action-btn send" id="voiceStopAndSendBtn" title="Send Voice Note">
+              <i class="fa-solid fa-circle-arrow-up"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Voice Recorder Trigger / Message Send button -->
+        <div class="main-action-btn-wrapper">
+          <!-- Record Voice button (visible when input is empty) -->
+          <button class="main-action-btn" id="voiceRecordBtn" title="Record Voice Note">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <!-- Send Message button (visible when input has text) -->
+          <button class="main-action-btn hidden" id="sendMessageBtn" title="Send Message">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Image Lightbox Modal for Full-Screen Viewing -->
+  <div class="lightbox-modal hidden" id="lightboxModal">
+    <button class="lightbox-close" id="lightboxCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+    <div class="lightbox-content">
+      <img src="" id="lightboxImg" alt="Enlarged Shared Media">
+    </div>
+  </div>
+
+  <!-- Application Execution logic -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
